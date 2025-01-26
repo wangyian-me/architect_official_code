@@ -1,5 +1,7 @@
 # Architect: Generating Vivid and Interactive 3D Scenes with Hierarchical 2D Inpainting
 
+#### This repo is still under development.
+
 ## Installation
 You can create a Conda environment for this simulator first:
 ```bash
