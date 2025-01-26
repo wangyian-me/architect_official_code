@@ -5,8 +5,8 @@
 ## Installation
 You can create a Conda environment for this simulator first:
 ```bash
-conda create -n thinshelllab python=3.9.16
-conda activate thinshelllab
+conda create -n architect python=3.9.16
+conda activate arthitect
 ```
 
 And install the package with its dependencies using
