@@ -10,6 +10,7 @@ conda activate arthitect
 ```
 
 Our work have dependency on the following amazing projects:
+
 [Genesis](https://github.com/Genesis-Embodied-AI/Genesis)
 
 [Grounded-SAM](https://github.com/IDEA-Research/Grounded-Segment-Anything/tree/main)
