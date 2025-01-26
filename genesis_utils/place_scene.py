@@ -7,9 +7,8 @@ import os
 import random
 import genesis as gs
 
-partnet_dir = "/project/pi_chuangg_umass_edu/yian/robogen/data/dataset"
-dataset_dir = "/work/pi_chuangg_umass_edu/yianwang_umass_edu-data/blenderkit_data_annotated"
-cache_dir = "/work/pi_chuangg_umass_edu/yianwang_umass_edu-data/cache"
+dataset_dir = os.environ.get("DATASET_PATH")
+cache_dir = os.environ.get("CACHE_PATH")
 
 
 def opengl_projection_matrix_to_intrinsics(P: np.ndarray, width: int, height: int):
@@ -165,7 +164,7 @@ def add_articulation(scene, x_l, x_r, y_l, y_r, z_l, z_r, asset_id):
     )
     return art
 
-def add_floor(scene, x_l, x_r, y_l, y_r, texture=''):
+def add_floor(scene, x_l, x_r, y_l, y_r, texture='', texture1=''):
 
     path = f"{cache_dir}/floor_{x_l}{x_r}{y_l}{y_r}.obj"
     if not os.path.exists(path):
@@ -196,7 +195,7 @@ def add_floor(scene, x_l, x_r, y_l, y_r, texture=''):
                              ),
         surface=gs.surfaces.Plastic(
             diffuse_texture=gs.textures.ImageTexture(
-                image_path=texture,
+                image_path=texture1,
             ),
             roughness=10,
             double_sided=True
@@ -247,7 +246,6 @@ def genesis_room(args):
     import json
 
     scene_path = os.path.join(args.work_dir, 'scene.json')
-    objaverse_asset_dir = '/project/pi_chuangg_umass_edu/yian/robogen/data/holodeck_data/data/objaverse_holodeck/09_23_combine_scale/processed_2023_09_23_combine_scale'
 
     if os.path.exists(scene_path):
         with open(scene_path, 'r') as file:
@@ -297,7 +295,7 @@ def genesis_room(args):
     walls = []
     floors = []
 
-    plane = add_floor(scene, 0, args.room_x, 0, args.room_y, texture=args.floor_texture_dir)
+    plane = add_floor(scene, 0, args.room_x, 0, args.room_y, texture=args.floor_texture_dir, texture1=args.wall_texture_dir)
 
     floors = [plane]
 

@@ -6,15 +6,7 @@ import base64
 import os
 from openai import OpenAI
 
-dataset_dir = "/work/pi_chuangg_umass_edu/yianwang_umass_edu-data/blenderkit_data_annotated"
-
-llm = AzureOpenAI(
-    # https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#rest-api-versioning
-    api_version="2024-02-15-preview",
-    # "https://qiuxw.openai.azure.com/openai/deployments/gpt-4o/chat/completions?api-version=2024-02-15-preview"
-    azure_endpoint="https://qiuxw.openai.azure.com/",
-)
-
+dataset_dir = os.environ.get("DATASET_PATH")
 
 # Function to encode a local image into data URL
 def local_image_to_data_url(image_path):
@@ -283,12 +275,12 @@ For each description, do the following steps:
    - "table": items can only go on the top surface.
    - "shelf": has multiple levels (like a bookshelf or a shelving unit).
    Note that TV stand is not a table or a shelf.
-3. Provide a concise Stable Diffusion XL inpainting prompt describing the small items you'd add,
+3. Provide a Stable Diffusion XL inpainting prompt that would inpainting desirable scenes on the furniture,
    ensuring:
    - They match the furniture
    - They are short and descriptive. For example:
-     - "A neat arrangement of vintage books and a small potted plant on the wooden shelf, photorealistic style, consistent shadows."
-     - "A messy office desk with scattered papers, a coffee mug, and a small desk lamp, photorealistic style."
+     - "A neat wooden shelf with arrangement of vintage books and potted plants, photorealistic style, consistent shadows."
+     - "A messy office desk full of objects, photorealistic style."
      - "An organized coffee table with coffee mug, decorative plants, and books, photorealistic style, consistent shadows."
    - You can add brief style hints (photorealistic, modern, minimalist, etc.) but keep it under one sentence.
 
@@ -298,7 +290,7 @@ Return your answer strictly as a JSON array, where each element corresponds to o
   {{
     "answer": "YES",
     "kind": "shelf",
-    "prompt": "A rustic wooden shelf displaying potted plants, photorealistic, consistent shadows."
+    "prompt": "A rustic wooden shelf with potted plants, photorealistic, consistent shadows."
   }},
   {{
     "answer": "NO"

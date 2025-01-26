@@ -57,10 +57,6 @@ def make_inpaint_condition(image, image_mask):
 
 pipe.mask_processor.blur = blur
 
-
-# image_dir = "/home/yianwang_umass_edu/RoboGen/ljg/Robogen/imgs/table.png"
-# mask_image_dir = "/home/yianwang_umass_edu/RoboGen/ljg/Robogen/imgs/table.png"
-
 def inpainting(image_dir, mask_image_dir, save_dir, prompt, negative_prompt, erosion_steps=5):
     print("##################### start inpainting #############################")
     init_image = load_image(
@@ -137,32 +133,4 @@ def inpainting_shelf(image_dir, mask_image_dir, save_dir, prompt, negative_promp
         negative_prompt=negative_prompt
     ).images[0]
     image.save(save_dir)
-# init_image = init_image.resize((512, 512))
 
-# def seg_to_image(mask_ceiling_dir, mask_ground_dir, mask_wall_dir, save_dir, prompt):
-#     # convert masks into a segmentation image
-#     mask_image_ceiling = load_image(mask_ceiling_dir)
-#     mask_np_ceiling = np.array(mask_image_ceiling)
-#     mask_np_ceiling = (mask_np_ceiling > 50)[:,:,0]
-#
-#     mask_image_floor = load_image(mask_ground_dir)
-#     mask_np_floor = np.array(mask_image_floor)
-#     mask_np_floor = (mask_np_floor > 50)[:,:,0]
-#
-#     mask_image_wall = load_image(mask_wall_dir)
-#     mask_np_wall = np.array(mask_image_wall)
-#     mask_np_wall = (mask_np_wall > 50)[:,:,0]
-#
-#     H, W = mask_np_wall.shape
-#
-#     color_seg = np.zeros((H,W,3))
-#     color_seg[mask_np_ceiling] = (120, 120, 80)
-#     color_seg[mask_np_floor] = (80, 50, 50)
-#     color_seg[mask_np_wall] = (120, 120, 120)
-#     color_seg = color_seg.astype(np.uint8)
-#
-#     segmentation_image = Image.fromarray(color_seg)
-#
-#     image = pipe_sd15(f"an empty store with wall and floor, bright, photorealistic", segmentation_image, num_inference_steps=20, negative_prompt="low quality, dark, living room, bathroom, kitchen, furniture").images[0]
-#
-#     image.save(save_dir)

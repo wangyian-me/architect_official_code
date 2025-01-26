@@ -7,9 +7,8 @@ import os
 import random
 import genesis as gs
 
-partnet_dir = "/project/pi_chuangg_umass_edu/yian/robogen/data/dataset"
-dataset_dir = "/work/pi_chuangg_umass_edu/yianwang_umass_edu-data/blenderkit_data_annotated"
-cache_dir = "/work/pi_chuangg_umass_edu/yianwang_umass_edu-data/cache"
+dataset_dir = os.environ.get("DATASET_PATH")
+cache_dir = os.environ.get("CACHE_PATH")
 
 def opengl_projection_matrix_to_intrinsics(P: np.ndarray, width: int, height: int):
     """Convert OpenGL projection matrix to camera intrinsics.
@@ -138,7 +137,7 @@ def add_skirting_line(scene, x_l, x_r, y_l, y_r, rotation):
         )
     )
 
-def add_floor(scene, x_l, x_r, y_l, y_r, texture=''):
+def add_floor(scene, x_l, x_r, y_l, y_r, texture='', texture1=''):
 
     path = f"{cache_dir}/floor_{x_l}{x_r}{y_l}{y_r}.obj"
     if not os.path.exists(path):
@@ -159,21 +158,22 @@ def add_floor(scene, x_l, x_r, y_l, y_r, texture=''):
             double_sided=True
         )
     )
-    # scene.add_entity(
-    #     material=gs.materials.Rigid(sdf_min_res=16, sdf_max_res=16),
-    #     morph=gs.morphs.Mesh(collision=False,file=path,
-    #                          pos=(0, 0, 4.5),
-    #                          euler=(0, 0, 0),
-    #                          scale=1.0,
-    #                          fixed=True
-    #                          ),
-    #     surface=gs.surfaces.Plastic(
-    #         kd=gs.textures.ImageTexture(
-    #             image_path="/project/pi_chuangg_umass_edu/yian/robogen/ljg/architect/blenderkit_data/566fc160-d286-4c4c-96ab-6359881e1a51/1.jpg",
-    #         ),
-    #         roughness=10,
-    #     )
-    # )
+    scene.add_entity(
+        material=gs.materials.Rigid(sdf_min_res=16, sdf_max_res=16),
+        morph=gs.morphs.Mesh(collision=False,file=path,
+                             pos=(0, 0, 5.0),
+                             euler=(0, 0, 0),
+                             scale=1.0,
+                             fixed=True
+                             ),
+        surface=gs.surfaces.Plastic(
+            diffuse_texture=gs.textures.ImageTexture(
+                image_path=texture1,
+            ),
+            roughness=10,
+            double_sided=True
+        )
+    )
     return plane
 
 def add_wall(scene, x_l, x_r, y_l, y_r, height=5, remove_region=None, texture=''):
@@ -262,7 +262,7 @@ def genesis_shelf(args):
     walls = []
     floors = []
 
-    plane = add_floor(scene, 0, args.room_x, 0, args.room_y, texture=args.floor_texture_dir)
+    plane = add_floor(scene, 0, args.room_x, 0, args.room_y, texture=args.floor_texture_dir, texture=args.wall_texture_dir)
 
     floors = [plane]
 
@@ -457,7 +457,7 @@ def genesis_table(args):
     walls = []
     floors = []
 
-    plane = add_floor(scene, 0, args.room_x, 0, args.room_y, texture=args.floor_texture_dir)
+    plane = add_floor(scene, 0, args.room_x, 0, args.room_y, texture=args.floor_texture_dir, texture1=args.wall_texture_dir)
 
     floors = [plane]
 

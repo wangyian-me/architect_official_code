@@ -213,7 +213,7 @@ from dds_cloudapi_sdk.tasks.dinox import DinoxTask
 from dds_cloudapi_sdk.tasks.types import DetectionTarget
 from dds_cloudapi_sdk import TextPrompt
 
-API_TOKEN = "ada265c8a6f3467ddd2477f06aa40986"  # <--- Put your real token here or pass it in differently
+API_TOKEN = os.environ.get("DINO_API_KEY")
 
 def get_dinox_output(api_token, image_path, prompt_text, threshold=0.25):
     """
