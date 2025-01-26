@@ -9,7 +9,18 @@ conda create -n architect python=3.9.16
 conda activate arthitect
 ```
 
-And install the package with its dependencies using
+Our work have dependency on the following amazing projects:
+[Genesis](https://github.com/Genesis-Embodied-AI/Genesis)
+[Grounded-SAM](https://github.com/IDEA-Research/Grounded-Segment-Anything/tree/main)
+[DINO-X](https://github.com/IDEA-Research/DINO-X-API/tree/main)
+[Marigold](https://github.com/prs-eth/Marigold.git)
+[Stable-diffusion-xl-inpainting](https://huggingface.co/diffusers/stable-diffusion-xl-1.0-inpainting-0.1)
+And optionally,
+[t2v_metrics](https://github.com/linzhiqiu/t2v_metrics).
+
+Set up these environments accordingly and add Grounded-SAM (mainly SAM since we can replace the Grounded-DINO with DINO-X, we will replace the SAM with DINO-X api soon), Marigold and t2v_metrics to `.../architect/` using soft link. It is tested that using the latest torch, huggingface, diffusers, transformers version will work.
+
+Meanwhile, we also need to build the dataset of object retrievel.
 ```bash
 
 ```
