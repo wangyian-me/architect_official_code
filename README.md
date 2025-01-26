@@ -11,10 +11,15 @@ conda activate arthitect
 
 Our work have dependency on the following amazing projects:
 [Genesis](https://github.com/Genesis-Embodied-AI/Genesis)
+
 [Grounded-SAM](https://github.com/IDEA-Research/Grounded-Segment-Anything/tree/main)
+
 [DINO-X](https://github.com/IDEA-Research/DINO-X-API/tree/main)
+
 [Marigold](https://github.com/prs-eth/Marigold.git)
+
 [Stable-diffusion-xl-inpainting](https://huggingface.co/diffusers/stable-diffusion-xl-1.0-inpainting-0.1)
+
 And optionally,
 [t2v_metrics](https://github.com/linzhiqiu/t2v_metrics).
 
