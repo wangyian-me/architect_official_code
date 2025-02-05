@@ -47,31 +47,31 @@ small_cate_list = [
 ]
 
 large_furniture_list = [
-    "Bed",
-    "Headboard",
-    "Bed frame",
-    "Bunk bed",
-    "Loft bed",
-    "Four-poster bed",
-    "Canopy bed",
-    "Daybed",
-    "Murphy bed",
-    "Nightstand",
-    "Dresser",
-    "Chest of drawers",
-    "Wardrobe",
-    "Armoire",
-    "Vanity",
-    "Chaise lounge",
-    "Desk",
-    "Chair",
-    "Bench",
-    "Blanket chest",
-    "Bookcase",
-    "Shelving unit",
-    "Accent cabinet",
-    "Linen cabinet",
-    "Dressing table",
+    # "Bed",
+    # "Headboard",
+    # "Bed frame",
+    # "Bunk bed",
+    # "Loft bed",
+    # "Four-poster bed",
+    # "Canopy bed",
+    # "Daybed",
+    # "Murphy bed",
+    # "Nightstand",
+    # "Dresser",
+    # "Chest of drawers",
+    # "Wardrobe",
+    # "Armoire",
+    # "Vanity",
+    # "Chaise lounge",
+    # "Desk",
+    # "Chair",
+    # "Bench",
+    # "Blanket chest",
+    # "Bookcase",
+    # "Shelving unit",
+    # "Accent cabinet",
+    # "Linen cabinet",
+    # "Dressing table",
     "Storage ottoman",
     "Room divider",
     "Tallboy",
@@ -560,6 +560,10 @@ class BlenderkitDataset():
             "codimension": codimension
         })
 
+        if not is_large:
+            stablerot = self.get_stable_rotation(asset_base_id)
+            ds.database[asset_base_id]["stable_rotations"] = stablerot
+
         self.refine_asset_description(asset_base_id, os.path.join(image_dir, f"{asset_base_id}_{front_view_idx}.png"))
         
         # Optionally, write the database after each annotation
@@ -930,3 +934,16 @@ class BlenderkitDataset():
         print(f"DINO small embeddings: {dino_small_embeds.shape}, saved to {dino_small_path}")
         print(f"CLIP large embeddings: {clip_large_embeds.shape}, saved to {clip_large_path}")
         print(f"CLIP small embeddings: {clip_small_embeds.shape}, saved to {clip_small_path}")
+
+    def get_stable_rotation(self, uid):
+        subprocess.run([
+            'python', 'get_stable_rotation.py', 
+            '--uid', uid, 
+            '--load_dir', self.data_dir, 
+        ])
+        file_path = os.path.join(self.data_dir, f"{uid}_stablerot.json")
+        if not os.path.exists(file_path):
+            return None
+        stablerot = json.load(open(file_path, "r"))
+        os.remove(file_path)
+        return stablerot

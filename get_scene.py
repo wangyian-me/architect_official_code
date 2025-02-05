@@ -272,6 +272,7 @@ def get_scene(input_dir, output_dir, intrinsic_K, camera_pose, input_mask_dir, i
             best_euler, best_scale, min_error = fit_euler_and_scale_simplified(
                 object_bbox,
                 target_bbox,
+                retriever.database[uid]["stable_rotations"],
                 ignore_dims=ignore_dims
             )
             pos = (np.array(result[i]['bbox'][1]) + np.array(result[i]['bbox'][0])) / 2

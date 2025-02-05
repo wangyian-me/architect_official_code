@@ -596,7 +596,7 @@ def rotated_bbox_extents(bbox_extents, euler_deg):
     max_xyz = rotated_corners.max(axis=0)
     return max_xyz - min_xyz  # shape (3,)
 
-def fit_euler_and_scale_simplified(object_bbox, target_bbox, ignore_dims=None):
+def fit_euler_and_scale_simplified(object_bbox, target_bbox, angle_candidates, ignore_dims=None):
     """
     Only try Euler angles of {0, 90} degrees about each axis (8 total).
     Compute a single, uniform scale for the included dimensions.
@@ -614,7 +614,7 @@ def fit_euler_and_scale_simplified(object_bbox, target_bbox, ignore_dims=None):
 
     Returns
     -------
-    best_euler : tuple of (x_angle, y_angle, z_angle)
+    best_euler : list of [x_angle, y_angle, z_angle]
     best_scale : float
         Uniform scale factor that best matches the included dimensions.
     best_error : float
@@ -623,44 +623,39 @@ def fit_euler_and_scale_simplified(object_bbox, target_bbox, ignore_dims=None):
     if ignore_dims is None:
         ignore_dims = []
 
-    # We'll consider these angles
-    angle_candidates = [0, 90]
-
     best_error = float('inf')
     best_euler = (0, 0, 0)
     best_scale = 1.0
 
-    for x_angle in angle_candidates:
-        for y_angle in angle_candidates:
-            for z_angle in angle_candidates:
-                euler_deg = (x_angle, y_angle, z_angle)
-                rot_ext = rotated_bbox_extents(object_bbox, euler_deg)
-                
-                # Collect indices we actually use
-                used_dims = [idx for idx in range(3) if idx not in ignore_dims]
-                
-                # If any used dimension is nearly zero in rot_ext => skip
-                if any(rot_ext[idx] < 1e-8 for idx in used_dims):
-                    continue
+    for angle_candidate in angle_candidates:
+        euler_deg = angle_candidate
+        rot_ext = rotated_bbox_extents(object_bbox, euler_deg)
+        
+        # Collect indices we actually use
+        used_dims = [idx for idx in range(3) if idx not in ignore_dims]
+        
+        # If any used dimension is nearly zero in rot_ext => skip
+        if any(rot_ext[idx] < 1e-8 for idx in used_dims):
+            continue
 
-                # Single scale factor across included dims
-                # e.g. mean of (target_dim / rot_dim) for all included dims
-                scale_factors = [target_bbox[idx] / rot_ext[idx] for idx in used_dims]
-                uniform_scale = np.min(scale_factors)
+        # Single scale factor across included dims
+        # e.g. mean of (target_dim / rot_dim) for all included dims
+        scale_factors = [target_bbox[idx] / rot_ext[idx] for idx in used_dims]
+        uniform_scale = np.min(scale_factors)
 
-                # Compute scaled extents
-                scaled_ext = rot_ext * uniform_scale
+        # Compute scaled extents
+        scaled_ext = rot_ext * uniform_scale
 
-                # Compute error only on included dims => sum of squared diff
-                error = 0.0
-                for idx in used_dims:
-                    diff = scaled_ext[idx] - target_bbox[idx]
-                    error += diff * diff
+        # Compute error only on included dims => sum of squared diff
+        error = 0.0
+        for idx in used_dims:
+            diff = scaled_ext[idx] - target_bbox[idx]
+            error += diff * diff
 
-                if error < best_error:
-                    best_error = error
-                    best_euler = euler_deg
-                    best_scale = uniform_scale
+        if error < best_error:
+            best_error = error
+            best_euler = euler_deg
+            best_scale = uniform_scale
 
     return best_euler, best_scale, best_error
 

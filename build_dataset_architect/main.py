@@ -13,24 +13,35 @@ glb_dir = data_dir
 
 ds = BlenderkitDataset(data_dir)
 
+for key in ds.database.keys():
+    info = ds.database[key]
+    if "is_large" in info and (not info["is_large"]):
+        stablerot = ds.get_stable_rotation(key)
+        ds.database[key]["stable_rotations"] = stablerot
+
+        ds.save_database()
+
+# ds.encode_large_and_small_objects()
+# ds.encode_dino_and_clip_features_for_large_and_small_objects(image_dir)
+
 # ds.test_orientation(image_dir, glb_dir)
 
 # 2. Loop through categories
 
-for cat in large_furniture_list:
-    print(f"=== Retrieving category: {cat} ===")
-    # 3. Search & download up to 20 matches
-    uids = ds.online_retrieve(cat)
+# for cat in large_furniture_list:
+#     print(f"=== Retrieving category: {cat} ===")
+#     # 3. Search & download up to 20 matches
+#     uids = ds.online_retrieve(cat)
 
-    # 4. Annotate each newly downloaded file
-    for uid in uids:
-        print(f"Annotating: {uid}")
-        # currently all are not large, set is_large=False
-        ds.annotate_glb(uid, image_dir, glb_dir, is_large=True)
+#     # 4. Annotate each newly downloaded file
+#     for uid in uids:
+#         print(f"Annotating: {uid}")
+#         # currently all are not large, set is_large=False
+#         ds.annotate_glb(uid, image_dir, glb_dir, is_large=True)
 
-ds.save_database()
+# ds.save_database()
 
-ds.encode_large_and_small_objects()
-ds.encode_dino_and_clip_features_for_large_and_small_objects(image_dir)
+# ds.encode_large_and_small_objects()
+# ds.encode_dino_and_clip_features_for_large_and_small_objects(image_dir)
 
-print("Done.")
+# print("Done.")
