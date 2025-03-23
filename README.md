@@ -84,11 +84,11 @@ export DINO_API_KEY=Your DINO_API_KEY
 
 To generate large furniture layout you can run:
 ```bash
-python pipeline_room.py --
+python pipeline_room.py --work_dir ./data/architect_results --room_x 6 --room_y 6 --wall_texture_dir 1.jpg --floor_texture_dir 2.jpg --prompt "living room" --scene_name "living_room_0"
 ```
 With large furniture layout, you can run the following scripts to generate small object placements:
 ```bash
-python pipeline_room_small.py --
+python pipeline_room_small.py --work_dir ./data/architect_results --room_x 6 --room_y 6 --wall_texture_dir 1.jpg --floor_texture_dir 2.jpg --prompt "living room" --scene_name "living_room_0"
 ```
 
 ## Citation
