@@ -207,53 +207,72 @@ sam_checkpoint = os.path.join(current_directory, "Grounded-Segment-Anything/sam_
 # model_dino = load_model(config_file, grounded_checkpoint, device="cuda")
 predictor = SamPredictor(sam_model_registry["vit_h"](checkpoint=sam_checkpoint).to("cuda"))
 
-from dds_cloudapi_sdk import Config
-from dds_cloudapi_sdk import Client
-from dds_cloudapi_sdk.tasks.dinox import DinoxTask
-from dds_cloudapi_sdk.tasks.types import DetectionTarget
-from dds_cloudapi_sdk import TextPrompt
+from dds_cloudapi_sdk import Config, Client
+from dds_cloudapi_sdk.tasks.v2_task import V2Task
 
 API_TOKEN = os.environ.get("DINO_API_KEY")
 
 def get_dinox_output(api_token, image_path, prompt_text, threshold=0.25):
     """
-    Query the DinoX cloud API for bounding boxes given an image and text prompt.
-    Return bounding boxes in [center_x, center_y, w, h] format and associated scores, phrases.
+    Query the DINOX cloud API for bounding boxes given an image and text prompt.
+    Returns bounding boxes in [center_x, center_y, w, h] format along with associated scores and phrases.
     """
+    # Initialize the client with the provided API token
     config = Config(api_token)
     client = Client(config)
-    # Upload local image to get the DDS server URL
+
+    # Upload the local image to the server and obtain the URL
     image_url = client.upload_file(image_path)
 
+    # If no prompt is provided, use an empty string
     if prompt_text is None:
-        prompt_text = "<prompt_free>"
+        prompt = {
+            "type": "universal",
+            "universal": 1
+        }
+    else:
+        prompt = {
+            "type": "text",
+            "text": prompt_text
+        }
 
-    task = DinoxTask(
-        image_url=image_url,
-        prompts=[TextPrompt(text=prompt_text)],
-        bbox_threshold=threshold,   # or use box_threshold from your function
-        targets=[DetectionTarget.BBox],
+    # Create the detection task with the appropriate parameters
+    task = V2Task(
+        api_path="/v2/task/dinox/detection",
+        api_body={
+            "model": "DINO-X-1.0",
+            "image": image_url,
+            "prompt": prompt,
+            "targets": ["bbox"],
+            "bbox_threshold": threshold,
+            "iou_threshold": 0.8
+        }
     )
+
+    # Execute the task
     client.run_task(task)
+
+    # Retrieve the results from the task
+    print(task.result)
     result = task.result
-    objects = result.objects  # list of detection results
+    objects = result["objects"]  # List of detection results
 
     boxes_centerwh = []
     scores = []
     pred_phrases = []
 
-    # DinoX gives boxes in xyxy
+    # Process each detected object to extract bounding box and associated information
     for obj in objects:
-        x1, y1, x2, y2 = obj.bbox  # xyxy
+        x1, y1, x2, y2 = obj["bbox"]  # Bounding box in xyxy format
         w = x2 - x1
         h = y2 - y1
         cx = x1 + w / 2
         cy = y1 + h / 2
+        cat = obj["category"]
+        score = obj["score"]
         boxes_centerwh.append([cx, cy, w, h])
-        scores.append(obj.score)
-        # You can attach the score to the category as "category(score)" for direct usage
-        # or just store the category. The original code expects something like "cat(0.99)".
-        pred_phrases.append(f"{obj.category}({obj.score:.3f})")
+        scores.append(obj["score"])
+        pred_phrases.append(f"{cat}({score:.3f})")
 
     return (
         torch.tensor(boxes_centerwh, dtype=torch.float32),
