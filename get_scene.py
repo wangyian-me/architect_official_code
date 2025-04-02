@@ -170,7 +170,8 @@ def get_scene(input_dir, output_dir, intrinsic_K, camera_pose, input_mask_dir, i
     previous_wall_placements = data['wall_objects']
 
     init_name_dict = {}
-    retriever = BlenderkitRetriever("/work/pi_chuangg_umass_edu/yianwang_umass_edu-data/blenderkit_data_annotated")
+    data_dir = os.environ.get("DATASET_PATH")
+    retriever = BlenderkitRetriever(data_dir)
     for obj in previous_floor_placements:
         name = obj['object_name']
         if name.split('-')[0] in init_name_dict:
