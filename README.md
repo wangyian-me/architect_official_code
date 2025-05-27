@@ -36,6 +36,8 @@ Set up these environments accordingly and add Grounded-SAM (mainly SAM since we 
 Meanwhile, we also need to build the dataset to retrieve objects. Specifically, we build a pipeline to automatically download and label assets from [Blenderkit](https://www.blenderkit.com/), where you can find your API Key in this [page](https://www.blenderkit.com/profile/addon/) after login.
 To download from Blenderkit, we need to create another conda environment with `bpy`.
 
+### Environment Setting
+
 ```bash
 conda create -n blenderkit python=3.11
 conda activate blenderkit
@@ -43,27 +45,7 @@ pip install numpy requests OpenEXR trimesh Imath tqdm opencv-python
 pip install bpy==4.2.0
 ```
 
-We provide a set of annotated objects together with the encoded features for retrieval usage.
-To download an asset with a `uid` you can either run:
-```bash
-conda activate blenderkit
-cd build_dataset_architect
-python download_blenderkit.py --uid {uid} --save_dir {save_dir} --api_key {api_key}
-```
-
-or download in python code,
-```python
-target_env = os.environ.get("BLENDER_ENV")
-target_code = 'download_blenderkit.py'
-subprocess.run([
-          'conda', 'run', 
-          '--prefix', target_env, 
-          'python', target_code,
-          '--uid', uid,
-          '--save_dir', save_dir
-      ])
-```
-
+### Build Your Own Asset Dataset
 
 After setting up the conda environment of blenderkit, assume it's at `{your_conda_path}/envs/blenderkit`. And assume you want to download your data in `architect_official_code/data/blenderkit_data_annotated`. Run the following code to start to build dataset.
 
@@ -82,6 +64,29 @@ export OPENAI_API_KEY=Your OPENAI_API_KEY
 export DATASET_PATH=......./architect_official_code/data/blenderkit_data_annotated
 
 python main.py
+```
+
+### Use Existing Asset Dataset
+
+We provide a set of annotated objects together with the encoded features for retrieval usage in `architect_official_code/data`
+To download an asset with a `uid` you can either run:
+```bash
+conda activate blenderkit
+cd build_dataset_architect
+python download_blenderkit.py --uid {uid} --save_dir {save_dir} --api_key {api_key}
+```
+
+or download in python code,
+```python
+target_env = os.environ.get("BLENDER_ENV")
+target_code = 'download_blenderkit.py'
+subprocess.run([
+          'conda', 'run', 
+          '--prefix', target_env, 
+          'python', target_code,
+          '--uid', uid,
+          '--save_dir', save_dir
+      ])
 ```
 
 
