@@ -43,7 +43,28 @@ pip install numpy requests OpenEXR trimesh Imath tqdm opencv-python
 pip install bpy==4.2.0
 ```
 
-### we will soon release the data we annotated, but it's still needed to download all the assets since we don't have the copy right to distribute those assets.
+We provide a set of annotated objects together with the encoded features for retrieval usage.
+To download an asset with a `uid` you can either run:
+```bash
+conda activate blenderkit
+cd build_dataset_architect
+python download_blenderkit.py --uid {uid} --save_dir {save_dir} --api_key {api_key}
+```
+
+or download in python code,
+```python
+target_env = os.environ.get("BLENDER_ENV")
+target_code = 'download_blenderkit.py'
+subprocess.run([
+          'conda', 'run', 
+          '--prefix', target_env, 
+          'python', target_code,
+          '--uid', uid,
+          '--save_dir', save_dir
+      ])
+```
+
+
 After setting up the conda environment of blenderkit, assume it's at `{your_conda_path}/envs/blenderkit`. And assume you want to download your data in `architect_official_code/data/blenderkit_data_annotated`. Run the following code to start to build dataset.
 
 ```bash
