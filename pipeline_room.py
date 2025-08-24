@@ -81,6 +81,7 @@ os.makedirs(base_dir, exist_ok=True)
 
 negative_prompt = "distorted, low quality, cartoon"
 scene_name = args.scene_name
+clean_prompt = args.prompt
 args.prompt = f"{args.prompt} with multiple pieces of furnitures, exacting precision, super high detail, photo realistic"
 
 args.work_dir = os.path.join(base_dir, f"scene_0")
@@ -113,7 +114,7 @@ while iter_time < args.iter_num and run_again_cnt < 4:
     for k in range(10):
         inpaint_img_dir = os.path.join(input_dir, f'scene_{k}.jpg')
         inpainting(img_toinpaint_dir, inpaint_mask_dir, inpaint_img_dir, args.prompt, negative_prompt)
-        score = clip_flant5_score(images=[inpaint_img_dir], texts=[scene_name])
+        score = clip_flant5_score(images=[inpaint_img_dir], texts=[clean_prompt])
         if score > max_score:
             max_id = k
             max_score = score
