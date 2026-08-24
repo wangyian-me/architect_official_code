@@ -33,7 +33,7 @@ Set up these environments accordingly and add Grounded-SAM (mainly SAM since we 
 
 ## Dataset
 
-Meanwhile, we also need to build the dataset to retrieve objects. Specifically, we build a pipeline to automatically download and label assets from [Blenderkit](https://www.blenderkit.com/), where you can find your API Key in this [page](https://www.blenderkit.com/profile/addon/) after login.
+Meanwhile, we also need to build the dataset to retrieve objects. Specifically, we build a pipeline to automatically download and label assets from [Blenderkit](https://www.blendkit.com/), where you can find your API Key in this [page](https://www.blendkit.com/profile/addon/) after login.
 To download from Blenderkit, we need to create another conda environment with `bpy`.
 
 ### Environment Setting
